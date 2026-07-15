@@ -1,6 +1,7 @@
 'use server';
 
 import { query } from '@/lib/db';
+import { revalidatePath } from 'next/cache';
 
 export async function saveArticle(data) {
   const { 
@@ -47,5 +48,16 @@ export async function saveArticle(data) {
   } catch (err) {
     console.error('Erro ao salvar artigo gerado por IA:', err);
     return { success: false, error: 'Erro ao salvar: ' + err.message };
+  }
+}
+
+export async function deleteArticle(id) {
+  try {
+    await query('DELETE FROM articles WHERE id = $1', [id]);
+    revalidatePath('/admin');
+    return { success: true };
+  } catch (err) {
+    console.error('Erro ao deletar notícia:', err);
+    return { success: false, error: 'Erro ao deletar: ' + err.message };
   }
 }

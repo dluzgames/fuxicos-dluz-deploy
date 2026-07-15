@@ -1,31 +1,10 @@
 import { query } from '@/lib/db';
 import Link from 'next/link';
-import { cookies } from 'next/headers';
-import { redirect } from 'next/navigation';
-import { revalidatePath } from 'next/cache';
+import DeleteForm from './DeleteForm';
 
 export const metadata = {
   title: 'Painel Admin | Fuxi Dluz',
 };
-
-// Logout action
-async function logout() {
-  'use server';
-  cookies().delete('admin_session');
-  redirect('/admin/login');
-}
-
-// Delete article action
-async function deleteArticle(formData) {
-  'use server';
-  const id = formData.get('id');
-  try {
-    await query('DELETE FROM articles WHERE id = $1', [id]);
-    revalidatePath('/admin');
-  } catch (err) {
-    console.error('Erro ao deletar notícia:', err);
-  }
-}
 
 export default async function AdminDashboard() {
   const result = await query('SELECT id, title, slug, status, created_at FROM articles ORDER BY created_at DESC');
@@ -73,12 +52,7 @@ export default async function AdminDashboard() {
                     Editar
                   </Link>
                   <span style={{ color: 'var(--border-color)' }}>|</span>
-                  <form action={deleteArticle} onSubmit={(e) => { if(!confirm('Deseja deletar esta notícia?')) e.preventDefault(); }}>
-                    <input type="hidden" name="id" value={article.id} />
-                    <button type="submit" style={{ background: 'none', border: 'none', color: '#b91c1c', fontWeight: 'bold', fontSize: '0.9rem', cursor: 'pointer', padding: 0 }}>
-                      Deletar
-                    </button>
-                  </form>
+                  <DeleteForm id={article.id} />
                 </div>
               </td>
             </tr>

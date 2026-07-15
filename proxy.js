@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { jwtVerify } from 'jose';
 
-export async function middleware(request) {
+export async function proxy(request) {
   const { pathname } = request.nextUrl;
   
   if (pathname.startsWith('/admin') && !pathname.startsWith('/admin/login')) {
