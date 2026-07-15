@@ -5,7 +5,8 @@ import Image from 'next/image';
 export const revalidate = 60;
 
 export async function generateMetadata({ params }) {
-  const result = await query('SELECT * FROM articles WHERE slug = $1', [params.slug]);
+  const { slug } = await params;
+  const result = await query('SELECT * FROM articles WHERE slug = $1', [slug]);
   const article = result.rows[0];
 
   if (!article) {
@@ -40,7 +41,8 @@ export async function generateMetadata({ params }) {
 }
 
 export default async function ArticlePage({ params }) {
-  const result = await query('SELECT * FROM articles WHERE slug = $1', [params.slug]);
+  const { slug } = await params;
+  const result = await query('SELECT * FROM articles WHERE slug = $1', [slug]);
   const article = result.rows[0];
 
   if (!article) {
