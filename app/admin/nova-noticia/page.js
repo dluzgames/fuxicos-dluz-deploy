@@ -20,12 +20,13 @@ async function createNews(formData) {
   const source_link = formData.get('source_link');
   const image_url = formData.get('image_url');
   const image_credit = formData.get('image_credit');
+  const status = formData.get('status') || 'published';
 
   try {
     await query(
-      `INSERT INTO articles (title, slug, excerpt, content, seo_title, seo_description, source_name, source_link, image_url, image_credit, category) 
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)`,
-      [title, slug, excerpt, content, seo_title, seo_description, source_name, source_link, image_url, image_credit, category]
+      `INSERT INTO articles (title, slug, excerpt, content, seo_title, seo_description, source_name, source_link, image_url, image_credit, category, status) 
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)`,
+      [title, slug, excerpt, content, seo_title, seo_description, source_name, source_link, image_url, image_credit, category, status]
     );
   } catch (err) {
     console.error(err);
@@ -71,6 +72,14 @@ export default function NovaNoticia({ searchParams }) {
           </div>
 
           <div className="form-group">
+            <label htmlFor="status">Status da Publicação</label>
+            <select id="status" name="status" className="form-control" defaultValue="published">
+              <option value="draft">Rascunho</option>
+              <option value="published">Publicado</option>
+            </select>
+          </div>
+
+          <div className="form-group">
             <label htmlFor="image_url">URL da Imagem</label>
             <input type="url" id="image_url" name="image_url" className="form-control" />
           </div>
@@ -109,7 +118,7 @@ export default function NovaNoticia({ searchParams }) {
 
         <div className="form-group">
           <label htmlFor="content">Conteúdo HTML *</label>
-          <textarea id="content" name="content" className="form-control" required></textarea>
+          <textarea id="content" name="content" className="form-control" style={{ minHeight: '250px' }} required></textarea>
         </div>
 
         <button type="submit" className="btn">Publicar Notícia</button>

@@ -4,6 +4,7 @@ Allow: /
 Disallow: /admin/
 
 Sitemap: https://fuxicos.dluz.com.br/sitemap.xml
+Sitemap: https://fuxicos.dluz.com.br/news-sitemap.xml
 `;
 
   return new Response(robots, {

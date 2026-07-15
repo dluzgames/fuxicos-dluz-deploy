@@ -2,7 +2,24 @@ import { query } from '@/lib/db';
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
 
+import { cookies } from 'next/headers';
+import { jwtVerify } from 'jose';
+
 export const revalidate = 60;
+
+async function isAdmin() {
+  const cookieStore = await cookies();
+  const session = cookieStore.get('admin_session')?.value;
+  if (!session) return false;
+  try {
+    const adminPassword = process.env.ADMIN_PASSWORD || '';
+    const secret = new TextEncoder().encode(adminPassword);
+    await jwtVerify(session, secret);
+    return true;
+  } catch (error) {
+    return false;
+  }
+}
 
 export async function generateMetadata({ params }) {
   const { slug } = await params;
@@ -10,6 +27,10 @@ export async function generateMetadata({ params }) {
   const article = result.rows[0];
 
   if (!article) {
+    return { title: 'Notícia não encontrada | Fuxi Dluz' };
+  }
+
+  if (article.status === 'draft' && !(await isAdmin())) {
     return { title: 'Notícia não encontrada | Fuxi Dluz' };
   }
 
@@ -46,6 +67,10 @@ export default async function ArticlePage({ params }) {
   const article = result.rows[0];
 
   if (!article) {
+    notFound();
+  }
+
+  if (article.status === 'draft' && !(await isAdmin())) {
     notFound();
   }
 

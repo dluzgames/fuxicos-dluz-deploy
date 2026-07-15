@@ -6,7 +6,7 @@ export const revalidate = 60; // Revalidate every minute
 
 export default async function Home() {
   const result = await query(
-    'SELECT * FROM articles ORDER BY created_at DESC LIMIT 20'
+    "SELECT * FROM articles WHERE status = 'published' ORDER BY created_at DESC LIMIT 20"
   );
   const articles = result.rows;
 

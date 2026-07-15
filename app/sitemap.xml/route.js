@@ -1,7 +1,7 @@
 import { query } from '@/lib/db';
 
 export async function GET() {
-  const result = await query('SELECT slug, updated_at FROM articles ORDER BY updated_at DESC');
+  const result = await query("SELECT slug, updated_at FROM articles WHERE status = 'published' ORDER BY updated_at DESC");
   const articles = result.rows;
 
   const baseUrl = 'https://fuxicos.dluz.com.br';
